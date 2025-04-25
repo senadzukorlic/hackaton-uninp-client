@@ -18,7 +18,7 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
+  // 
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
