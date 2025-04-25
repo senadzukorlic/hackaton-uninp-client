@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import Button from './Button';
 import AnimatedSection from './AnimatedSection';
 import { Mail, MapPin, Phone } from 'lucide-react';
