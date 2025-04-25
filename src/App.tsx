@@ -8,6 +8,9 @@ import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
+import Contact from './components/Contact';
+import About from './components/About';
+import Features from './components/Features';
 
 // ScrollToTop component to handle scroll position on route changes
 const ScrollToTop: React.FC = () => {
@@ -27,6 +30,9 @@ const AnimatedRoutes: React.FC = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/contact" element={<Contact/>} />
+        <Route path="/features" element={<Features/>} />
+        <Route path="/about" element={<About/>} />
         <Route path="/auth" element={!token ? <AuthPage />: <Navigate to="/"/>} />
         <Route path="/profile" element={token ? <ProfilePage />: <Navigate to="/auth"/>} />
         <Route path="*" element={<NotFoundPage />} />

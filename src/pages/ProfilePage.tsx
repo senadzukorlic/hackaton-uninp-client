@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Activity, TrendingUp, Clock } from 'lucide-react';
+import { User, Activity, TrendingUp, Clock, Brain, Cpu } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
@@ -9,10 +9,9 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
   ArcElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -24,10 +23,9 @@ import { UserType } from '../types/UserType';
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
   ArcElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
@@ -42,7 +40,7 @@ const ProfilePage: React.FC = () => {
   const decoded: { id: number } = jwtDecode(token);
   const userID = decoded.id;
 
-  // Mock recent activity data (replace with actual API call if needed)
+  // Mock recent activity data
   const recentActivities = [
     { id: 1, action: 'Completed Task: Project Alpha', timestamp: '2025-04-23 10:30 AM' },
     { id: 2, action: 'Updated Profile Information', timestamp: '2025-04-22 3:15 PM' },
@@ -88,7 +86,7 @@ const ProfilePage: React.FC = () => {
     },
   };
 
-  // Chart data and options
+  // Chart data
   const activityData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
@@ -127,7 +125,35 @@ const ProfilePage: React.FC = () => {
     ],
   };
 
+  // AI Models Performance Data for Horizontal Bar Chart
+  const aiModelsData = {
+    labels: [
+      'Language Processing',
+      'Image Recognition',
+      'Predictive Analytics',
+      'Natural Language Generation',
+      'Speech Recognition',
+    ],
+    datasets: [
+      {
+        label: 'Accuracy (%)',
+        data: [95, 78, 85, 92, 88],
+        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+        borderColor: 'rgba(59, 130, 246, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'Reliability (%)',
+        data: [88, 92, 75, 95, 82],
+        backgroundColor: 'rgba(16, 185, 129, 0.6)',
+        borderColor: 'rgba(16, 185, 129, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
   const chartOptions = {
+    indexAxis: 'y' as const, // Makes the bar chart horizontal
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -136,14 +162,49 @@ const ProfilePage: React.FC = () => {
           color: '#1f2937',
           usePointStyle: true,
         },
+        position: 'top' as const,
+      },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            const datasetLabel = context.dataset.label || '';
+            const value = context.parsed.x;
+            return `${datasetLabel}: ${value}%`;
+          },
+        },
+      },
+      datalabels: {
+        // Add data labels to bars
+        anchor: 'end' as const,
+        align: 'end' as const,
+        color: '#1f2937',
+        font: {
+          weight: 'bold' as const,
+        },
+        formatter: (value: number) => `${value}%`,
       },
     },
     scales: {
       x: {
-        ticks: { color: '#1f2937' },
+        min: 0,
+        max: 100,
+        title: {
+          display: true,
+          text: 'Percentage (%)',
+          color: '#1f2937',
+        },
+        ticks: {
+          color: '#1f2937',
+          callback: (value: number) => `${value}%`,
+        },
         grid: { color: '#e5e7eb' },
       },
       y: {
+        title: {
+          display: true,
+          text: 'AI Models',
+          color: '#1f2937',
+        },
         ticks: { color: '#1f2937' },
         grid: { color: '#e5e7eb' },
       },
@@ -160,13 +221,30 @@ const ProfilePage: React.FC = () => {
           usePointStyle: true,
         },
       },
+      datalabels: {
+        ...chartOptions.plugins.datalabels,
+        color: '#f3f4f6',
+      },
     },
     scales: {
       x: {
-        ticks: { color: '#f3f4f6' },
+        ...chartOptions.scales.x,
+        title: {
+          ...chartOptions.scales.x.title,
+          color: '#f3f4f6',
+        },
+        ticks: {
+          ...chartOptions.scales.x.ticks,
+          color: '#f3f4f6',
+        },
         grid: { color: '#374151' },
       },
       y: {
+        ...chartOptions.scales.y,
+        title: {
+          ...chartOptions.scales.y.title,
+          color: '#f3f4f6',
+        },
         ticks: { color: '#f3f4f6' },
         grid: { color: '#374151' },
       },
@@ -245,7 +323,7 @@ const ProfilePage: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <Button  className="mt-4 text-primary-600 dark:text-primary-400">
+            <Button className="mt-4 text-primary-600 dark:text-primary-400">
               View All Activity
             </Button>
           </AnimatedSection>
@@ -307,6 +385,58 @@ const ProfilePage: React.FC = () => {
             </div>
           </AnimatedSection>
         </div>
+
+        {/* AI Models Performance Section */}
+        <AnimatedSection
+          className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
+          delay={0.5}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white flex items-center">
+                <Brain size={28} className="mr-3 text-blue-600" />
+                AI Models Performance Matrix
+              </h3>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">
+                Visualization of AI model performance across different domains
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center">
+                <Cpu className="w-5 h-5 text-blue-600 mr-2" />
+                <span className="text-sm text-gray-600 dark:text-gray-300">Active Models: 5</span>
+              </div>
+              <Button variant="outline" size="sm">
+                View Details
+              </Button>
+            </div>
+          </div>
+
+          <div className="h-[500px] w-full">
+            <Bar
+              data={aiModelsData}
+              options={document.documentElement.classList.contains('dark') ? darkModeChartOptions : chartOptions}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+              <div className="text-blue-600 dark:text-blue-400 font-semibold">Highest Accuracy</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Natural Language Generation</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">95% accuracy rate</div>
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+              <div className="text-purple-600 dark:text-purple-400 font-semibold">Most Reliable</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Image Recognition</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">92% reliability score</div>
+            </div>
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+              <div className="text-green-600 dark:text-green-400 font-semibold">Largest Dataset</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Predictive Analytics</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">25M training samples</div>
+            </div>
+          </div>
+        </AnimatedSection>
       </div>
 
       {/* Decorative background elements */}
