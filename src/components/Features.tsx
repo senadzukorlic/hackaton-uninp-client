@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Brain, ServerIcon, Database, Zap, Lock, LineChart, MessageSquare } from 'lucide-react';
+import { Bot, Brain, Zap, Lock} from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 interface FeatureCardProps {
@@ -50,59 +50,31 @@ const Features: React.FC = () => {
   const features = [
     {
       icon: <Bot size={30} className="text-blue-500" />,
-      title: "Napredna konverzaciona veštačka inteligencija",
-      description: "Obrada prirodnog jezika koja razume kontekst i pruža interakcije slične ljudskim.",
+      title: "Presonalizacija",
+      description: "Prilagodi Sandru tako da najbolje ispunjava tvoje zahteve.",
       color: "border-blue-500",
       delay: 0.1
     },
     {
       icon: <Brain size={30} className="text-purple-500" />,
-      title: "Mašinsko učenje",
-      description: "Prilagodljivi algoritmi koji uče iz interakcija kako bi pružili sve personalizovanija iskustva.",
+      title: "Mašinsko Učenje",
+      description: "Sandra koristi algoritam mašinskog učenja da se prilagodi vašem stilu života.",
       color: "border-purple-500",
       delay: 0.2
     },
     {
-      icon: <ServerIcon size={30} className="text-indigo-500" />,
-      title: "Cloud infrastruktura",
-      description: "Skalabilna arhitektura dizajnirana za obradu miliona zahteva uz minimalnu latenciju.",
-      color: "border-indigo-500",
-      delay: 0.3
-    },
-    {
-      icon: <Database size={30} className="text-green-500" />,
-      title: "Napredna obrada podataka",
-      description: "Sofisticirane mogućnosti rukovanja podacima za ogromne skupove podataka sa uvidima u realnom vremenu.",
-      color: "border-green-500",
-      delay: 0.4
-    },
-    {
       icon: <Zap size={30} className="text-yellow-500" />,
-      title: "Analiza u realnom vremenu",
-      description: "Trenutna obrada složenih upita koja pruža trenutne, korisne informacije.",
+      title: "Razgovor u Realnom Vremenu",
+      description: "Sandra poseduje mogućnost pričanja u realnom vremenu sa vama.",
       color: "border-yellow-500",
       delay: 0.5
     },
     {
       icon: <Lock size={30} className="text-red-500" />,
-      title: "Sigurnost na nivou preduzeća",
-      description: "Enkripcija na nivou banaka i usklađenost sa glavnim standardima i propisima o sigurnosti.",
+      title: "Sigurnost",
+      description: "Sandra vam nudi pozive za hitne slučajeve.",
       color: "border-red-500",
       delay: 0.6
-    },
-    {
-      icon: <LineChart size={30} className="text-teal-500" />,
-      title: "Prediktivna analitika",
-      description: "Predviđajte trendove i anticipirajte potrebe uz napredne tehnike prediktivnog modeliranja.",
-      color: "border-teal-500",
-      delay: 0.7
-    },
-    {
-      icon: <MessageSquare size={30} className="text-pink-500" />,
-      title: "Višejezička podrška",
-      description: "Komunicirajte bez problema na različitim jezicima uz tačne, kontekstualne prevode.",
-      color: "border-pink-500",
-      delay: 0.8
     }
   ];
 
@@ -120,13 +92,13 @@ const Features: React.FC = () => {
             variants={itemVariants}
             className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            Pokreće ga najsavremenija <span className="text-blue-600">veštačka inteligencija</span>
+            Sandra ti olakšava <span className="text-blue-600">život</span>
           </motion.h2>
           <motion.p 
             variants={itemVariants}
             className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
-            Naša platforma kombinuje najsavremeniju veštačku inteligenciju sa intuitivnim dizajnom kako bi pružila izuzetno korisničko iskustvo.
+            Dopusti nam da ti pokažemo šta sandra može.
           </motion.p>
         </motion.div>
         

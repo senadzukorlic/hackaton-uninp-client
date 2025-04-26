@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { AlertCircle, Clock, User } from 'lucide-react';
+import {  Clock, User } from 'lucide-react';
 import { Task } from './TaskBoard';
 
 interface TaskCardProps {
