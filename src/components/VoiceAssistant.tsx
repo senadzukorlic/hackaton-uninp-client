@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useConversation } from "@11labs/react";
 import { Mic, MicOff } from "lucide-react";
-
+import axios from "axios";
+import { useAiResponse } from "../contexts/AiResponseContext";
 
 const VoiceAssistant: React.FC = () => {
   const [connecting, setConnecting] = useState(false);
@@ -9,6 +10,8 @@ const VoiceAssistant: React.FC = () => {
   const [messages, setMessages] = useState<{ text: string; isUser: string }[]>(
     []
   );
+  const { aiRes, setAiRes } = useAiResponse();
+  const [defaultResponse, setDefaultResponse] = useState<string>(aiRes);
 
   // Handle conversation state
   const conversation = useConversation({
@@ -31,6 +34,21 @@ const VoiceAssistant: React.FC = () => {
           },
         ]);
         setMessage("");
+        if (message.source == "user") {
+          axios
+            .post(
+              "http://localhost:8080/api/chat/process",
+              { prompt: message.message },
+              {
+                headers: {
+                  Authorization: localStorage.getItem("token"),
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data);
+            });
+        }
       }
     },
     onError: (error) => {
@@ -49,12 +67,19 @@ const VoiceAssistant: React.FC = () => {
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
       // Start the conversation with your agent
+      if (aiRes) {
+        setDefaultResponse(aiRes);
+        console.log("MSG", aiRes);
+      }
       await conversation.startSession({
-        agentId: "a8eeCUphkbhZrSduGFqj", // Replace with your agent ID
+        agentId: "55LdsD87rotf5BTzrrn7", // Replace with your agent ID
+        overrides: {
+          agent: {
+            firstMessage: `${defaultResponse || "Zdravo, kako mogu da ti pomognem"}`,
+          },
+        },
       });
-      setMessages((prev) => [
-        ...prev
-      ]);
+      setMessages((prev) => [...prev]);
     } catch (error) {
       console.error("Failed to start conversation:", error);
       setMessage("Failed to start conversation");
@@ -65,6 +90,7 @@ const VoiceAssistant: React.FC = () => {
   // Handle stopping the conversation
   const stopConversation = useCallback(async () => {
     setMessage("Disconnecting...");
+    setAiRes("Zdravo, kako mogu da ti pomognem?")
     await conversation.endSession();
   }, [conversation]);
 
@@ -92,7 +118,6 @@ const VoiceAssistant: React.FC = () => {
                 : "mr-auto bg-gray-800 text-white rounded-tl-none"
             }`}
           >
-            
             {msg.text.includes("{") ? msg.text.split("{")[0] : msg.text}
           </div>
         ))}
