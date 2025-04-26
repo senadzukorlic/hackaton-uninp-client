@@ -75,7 +75,7 @@ console.log(token,"ovo je token iz taskBoard")
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/chat/responses', {
+        const response = await axios.get('http://localhost:8070/api/chat/responses', {
           headers: {
             Authorization: token, 
           },
@@ -148,7 +148,7 @@ console.log(token,"ovo je token iz taskBoard")
       // Update task status in backend
       try {
         await axios.put(
-          `http://localhost:8080/api/chat/responses/${activeTask.id}`,
+          `http://localhost:8070/api/chat/responses/${activeTask.id}`,
           { isOver: overColumn.id === 'done' },
           {
             headers: {

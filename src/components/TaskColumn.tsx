@@ -19,16 +19,16 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ column, tasks }) => {
   });
 
   const columnColors = {
-    'todo': 'border-blue-500/20',
+    todo: 'border-blue-500/20',
     'in-progress': 'border-purple-500/20',
-    'review': 'border-yellow-500/20',
-    'done': 'border-green-500/20',
+    review: 'border-yellow-500/20',
+    done: 'border-green-500/20',
   };
 
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border-t-4 ${columnColors[column.id as keyof typeof columnColors]}`}
+      className={`bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border-t-4 ${columnColors[column.id as keyof typeof columnColors]} flex flex-col`}
     >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
@@ -48,10 +48,16 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ column, tasks }) => {
         items={tasks.map(task => task.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="space-y-4">
-          {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))}
+        <div className="space-y-4 flex-1">
+          {tasks.length > 0 ? (
+            tasks.map((task) => (
+              <TaskCard key={task.id} task={task} />
+            ))
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center">
+              No tasks in this column
+            </p>
+          )}
         </div>
       </SortableContext>
     </div>
