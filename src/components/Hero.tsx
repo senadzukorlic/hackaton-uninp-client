@@ -38,14 +38,14 @@ const Hero: React.FC = () => {
             className="text-hero-mobile md:text-hero-desktop font-bold leading-tight text-gray-900 dark:text-white mb-6"
             variants={itemVariants}
           >
-            Modern <span className="text-primary-600">React</span> Application
+            Sandra | <span className="text-primary-600">Tvoj Asistent</span> 
           </motion.h1>
-          
+
           <motion.p 
             className="text-xl md:text-2xl font-light text-gray-700 dark:text-gray-300 mb-10 max-w-3xl mx-auto"
             variants={itemVariants}
           >
-            A beautiful, responsive single-page application with dark mode, animations, and authentication.
+           Personalizovani zivotni savetnik. koji ce vam pruziti potpuni podrsku u svakodnevnim obavezama.
           </motion.p>
           
           <motion.div
@@ -53,10 +53,10 @@ const Hero: React.FC = () => {
             variants={itemVariants}
           >
             <Button size="lg">
-              Get Started
+              Zapocni
             </Button>
             <Button variant="outline" size="lg">
-              Learn More
+              Saznaj vise
             </Button>
           </motion.div>
         </motion.div>

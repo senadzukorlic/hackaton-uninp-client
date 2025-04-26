@@ -8,7 +8,8 @@ import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
-
+import StickyFooter from './components/StickyFooter';
+import VoiceAssistant from './components/VoiceAssistant';
 // ScrollToTop component to handle scroll position on route changes
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -29,6 +30,7 @@ const AnimatedRoutes: React.FC = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/auth" element={!token ? <AuthPage />: <Navigate to="/"/>} />
         <Route path="/profile" element={token ? <ProfilePage />: <Navigate to="/auth"/>} />
+        <Route path="/assistant" element={token ? <VoiceAssistant />: <Navigate to="/auth"/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
@@ -46,6 +48,7 @@ function App() {
             <AnimatedRoutes />
           </main>
           <Footer />
+          <StickyFooter />
         </div>
       </BrowserRouter>
     </ThemeProvider>
