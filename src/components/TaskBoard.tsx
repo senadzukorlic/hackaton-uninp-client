@@ -68,21 +68,6 @@ const TaskBoard: React.FC = () => {
       ],
     },
     {
-      id: 'in-progress',
-      title: 'In Progress',
-      tasks: [
-        {
-          id: '3',
-          title: 'Design UI Components',
-          description: 'Create reusable UI components for the dashboard',
-          priority: 'medium',
-          assignee: 'Alice Johnson',
-          dueDate: '2025-03-10',
-          tags: ['design', 'ui', 'components'],
-        },
-      ],
-    },
-    {
       id: 'done',
       title: 'Done',
       tasks: [
@@ -246,65 +231,65 @@ const TaskBoard: React.FC = () => {
         <div className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-gradient-to-t from-indigo-500/5 to-blue-500/5 rounded-full blur-3xl transform -rotate-12"></div>
       </div>
 
-      <div className="container mx-auto px-4 relative">
+      <div className="container mx-auto px-4 relative max-w-7xl">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="mb-8"
         >
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                AI Development Tasks
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300">
-                Track and manage AI development tasks across your team
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search tasks..."
-                  className="w-full sm:w-64 pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-500 text-gray-900 dark:text-white"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          <div className="flex flex-col items-center justify-center mb-8 text-center">
+            <h1 className="m-[30px] text-3xl font-bold text-gray-900 dark:text-white mb-30">
+            Zadaci razvoja veštačke inteligencije
+            </h1>
+         
+            
+            {/* Centered search and filter controls */}
+            <div className="w-full max-w-3xl flex flex-col gap-1">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 justify-center">
+                <div className="relative flex-grow max-w-md">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search tasks..."
+                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-500 text-gray-900 dark:text-white"
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center justify-center gap-4">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowFilters(!showFilters)}
                   >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                >
-                  <Filter size={16} className="mr-2" />
-                  Filter
-                </Button>
-                <Button 
-                  size="sm"
-                  onClick={() => setShowAddTask(true)}
-                >
-                  <Plus size={16} className="mr-2" />
-                  Add Task
-                </Button>
+                    <Filter size={16} className="mr-2" />
+                    Filter
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => setShowAddTask(true)}
+                  >
+                    <Plus size={16} className="mr-2" />
+                    Add Task
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Filters Panel */}
+          {/* Filters Panel - Centered */}
           {showFilters && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8 shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8 shadow-sm max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Priority
@@ -361,7 +346,7 @@ const TaskBoard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end mt-6">
+              <div className="flex justify-center mt-6">
                 <Button
                   variant="outline"
                   size="sm"
@@ -378,8 +363,8 @@ const TaskBoard: React.FC = () => {
 
           {/* Add Task Modal */}
           {showAddTask && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg mx-4">
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Add New Task
                 </h3>
@@ -406,7 +391,7 @@ const TaskBoard: React.FC = () => {
                       rows={3}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Priority
@@ -495,7 +480,7 @@ const TaskBoard: React.FC = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6 max-w-7xl mx-auto">
             {filteredColumns.map((column) => (
               <TaskColumn
                 key={column.id}

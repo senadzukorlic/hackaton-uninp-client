@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Activity, TrendingUp, Clock, Brain, Zap, Cpu } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
-import { Line, Bar, Doughnut, Scatter } from 'react-chartjs-2';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import {
@@ -17,10 +17,11 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels'; // Import datalabels plugin
 import Button from '../components/Button';
 import { UserType } from '../types/UserType';
 
-// Registracija Chart.js komponenti
+// Register Chart.js components and datalabels plugin
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,7 +31,8 @@ ChartJS.register(
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartDataLabels // Register datalabels
 );
 
 const ProfilePage: React.FC = () => {
@@ -42,7 +44,7 @@ const ProfilePage: React.FC = () => {
   const decoded: { id: number } = jwtDecode(token);
   const userID = decoded.id;
 
-  // Mock podaci o nedavnim aktivnostima (zameniti stvarnim API pozivom ako je potrebno)
+  // Mock recent activities
   const recentActivities = [
     { id: 1, action: 'Završen zadatak: Projekat Alfa', timestamp: '2025-04-23 10:30' },
     { id: 2, action: 'Ažurirane informacije profila', timestamp: '2025-04-22 15:15' },
@@ -88,7 +90,7 @@ const ProfilePage: React.FC = () => {
     },
   };
 
-  // Podaci i opcije za grafikone
+  // Chart data
   const activityData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun'],
     datasets: [
@@ -127,18 +129,19 @@ const ProfilePage: React.FC = () => {
     ],
   };
 
-  // Podaci o performansama AI modela
+  // Horizontal Bar chart data for AI models
   const aiModelsData = {
+    labels: [
+      'Obrada jezika',
+      'Prepoznavanje slika',
+      'Prediktivna analitika',
+      'Generisanje prirodnog jezika',
+      'Prepoznavanje govora',
+    ],
     datasets: [
       {
-        label: 'Performanse AI modela',
-        data: [
-          { x: 95, y: 88, r: 15, model: 'Obrada jezika' },
-          { x: 78, y: 92, r: 20, model: 'Prepoznavanje slika' },
-          { x: 85, y: 75, r: 25, model: 'Prediktivna analitika' },
-          { x: 92, y: 95, r: 18, model: 'Generisanje prirodnog jezika' },
-          { x: 88, y: 82, r: 22, model: 'Prepoznavanje govora' },
-        ],
+        label: 'Tačnost (%)',
+        data: [95, 78, 85, 92, 88],
         backgroundColor: [
           'rgba(59, 130, 246, 0.6)',
           'rgba(139, 92, 246, 0.6)',
@@ -154,10 +157,13 @@ const ProfilePage: React.FC = () => {
           'rgba(236, 72, 153, 1)',
         ],
         borderWidth: 2,
+        // Additional data for reliability to show in tooltips
+        reliability: [88, 92, 75, 95, 82],
       },
     ],
   };
 
+  // Base chart options
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -171,15 +177,27 @@ const ProfilePage: React.FC = () => {
       tooltip: {
         callbacks: {
           label: (context: any) => {
-            const model = context.raw.model;
-            return `${model}: Tačnost ${context.raw.x}%, Pouzdanost ${context.raw.y}%`;
+            const index = context.dataIndex;
+            const dataset = context.dataset;
+            const model = context.chart.data.labels[index];
+            const accuracy = dataset.data[index];
+            const reliability = dataset.reliability ? dataset.reliability[index] : null;
+            return reliability
+              ? `${model}: Tačnost ${accuracy}%, Pouzdanost ${reliability}%`
+              : `${context.dataset.label}: ${context.raw}`;
           },
         },
+      },
+      datalabels: {
+        color: '#1f2937',
+        anchor: 'end',
+        align: 'end',
+        formatter: (value: number) => value,
       },
     },
     scales: {
       x: {
-        min: 50,
+        min: 0,
         max: 100,
         title: {
           display: true,
@@ -190,11 +208,9 @@ const ProfilePage: React.FC = () => {
         grid: { color: '#e5e7eb' },
       },
       y: {
-        min: 50,
-        max: 100,
         title: {
           display: true,
-          text: 'Pouzdanost (%)',
+          text: 'Model',
           color: '#1f2937',
         },
         ticks: { color: '#1f2937' },
@@ -203,6 +219,7 @@ const ProfilePage: React.FC = () => {
     },
   };
 
+  // Dark mode chart options
   const darkModeChartOptions = {
     ...chartOptions,
     plugins: {
@@ -212,6 +229,10 @@ const ProfilePage: React.FC = () => {
           color: '#f3f4f6',
           usePointStyle: true,
         },
+      },
+      datalabels: {
+        ...chartOptions.plugins.datalabels,
+        color: '#f3f4f6',
       },
     },
     scales: {
@@ -236,10 +257,37 @@ const ProfilePage: React.FC = () => {
     },
   };
 
+  // Doughnut-specific options to adjust datalabels
+  const doughnutOptions = {
+    ...chartOptions,
+    plugins: {
+      ...chartOptions.plugins,
+      datalabels: {
+        color: '#fff',
+        anchor: 'center',
+        align: 'center',
+        formatter: (value: number) => `${value}%`,
+      },
+    },
+  };
+
+  const darkModeDoughnutOptions = {
+    ...darkModeChartOptions,
+    plugins: {
+      ...darkModeChartOptions.plugins,
+      datalabels: {
+        color: '#fff',
+        anchor: 'center',
+        align: 'center',
+        formatter: (value: number) => `${value}%`,
+      },
+    },
+  };
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-dark py-20">
       <div className="container my-12 mx-auto px-4">
-        {/* Zaglavlje */}
+        {/* Header */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -260,9 +308,8 @@ const ProfilePage: React.FC = () => {
           </motion.p>
         </motion.div>
 
-        {/* Informacije o korisniku i nedavne aktivnosti */}
+        {/* User info and recent activities */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* Kartica sa informacijama o korisniku (maksimalna širina) */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 lg:col-span-2"
             delay={0.1}
@@ -291,7 +338,6 @@ const ProfilePage: React.FC = () => {
             </div>
           </AnimatedSection>
 
-          {/* Kartica sa nedavnim aktivnostima */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
             delay={0.2}
@@ -314,9 +360,8 @@ const ProfilePage: React.FC = () => {
           </AnimatedSection>
         </div>
 
-        {/* Sekcija sa grafikonima */}
+        {/* Charts section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Grafikon linije aktivnosti */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.2}
@@ -333,7 +378,6 @@ const ProfilePage: React.FC = () => {
             </div>
           </AnimatedSection>
 
-          {/* Grafikon stubića napretka */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.3}
@@ -350,7 +394,6 @@ const ProfilePage: React.FC = () => {
             </div>
           </AnimatedSection>
 
-          {/* Grafikon krofne performansi */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.4}
@@ -362,16 +405,17 @@ const ProfilePage: React.FC = () => {
             <div className="h-64">
               <Doughnut
                 data={performanceData}
-                options={{
-                  ...document.documentElement.classList.contains('dark') ? darkModeChartOptions : chartOptions,
-                  cutout: '70%',
-                }}
+                options={
+                  document.documentElement.classList.contains('dark')
+                    ? darkModeDoughnutOptions
+                    : doughnutOptions
+                }
               />
             </div>
           </AnimatedSection>
         </div>
 
-        {/* Nova sekcija performansi AI modela */}
+        {/* AI Models Performance Section (Horizontal Bar) */}
         <AnimatedSection
           className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
           delay={0.5}
@@ -398,9 +442,24 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div className="h-[500px] w-full">
-            <Scatter
+            <Bar
               data={aiModelsData}
-              options={document.documentElement.classList.contains('dark') ? darkModeChartOptions : chartOptions}
+              options={{
+                ...document.documentElement.classList.contains('dark') ? darkModeChartOptions : chartOptions,
+                indexAxis: 'y', // Make it horizontal
+                plugins: {
+                  ...chartOptions.plugins,
+                  datalabels: {
+                    color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#1f2937',
+                    anchor: 'end',
+                    align: 'right',
+                    formatter: (value: number, context: any) => {
+                      const reliability = context.dataset.reliability[context.dataIndex];
+                      return `${value}% (Pouzdanost: ${reliability}%)`;
+                    },
+                  },
+                },
+              }}
             />
           </div>
 
@@ -424,7 +483,7 @@ const ProfilePage: React.FC = () => {
         </AnimatedSection>
       </div>
 
-      {/* Dekorativni elementi pozadine */}
+      {/* Background decorative elements */}
       <div className="absolute top-1/4 left-10 w-64 h-64 bg-primary-600/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-10 w-80 h-80 bg-primary-600/5 rounded-full blur-3xl"></div>
     </section>
