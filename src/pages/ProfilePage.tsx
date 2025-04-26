@@ -43,6 +43,7 @@ const ProfilePage: React.FC = () => {
   const token = localStorage.getItem('token') || '';
   const decoded: { id: number } = jwtDecode(token);
   const userID = decoded.id;
+  console.log(token,"token iz profila")
 
   // Mock recent activities
   const recentActivities = [

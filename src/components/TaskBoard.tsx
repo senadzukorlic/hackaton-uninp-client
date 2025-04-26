@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   DndContext,
@@ -15,9 +15,11 @@ import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { Plus, Filter, Search, X } from 'lucide-react';
+import axios from 'axios';
 import TaskColumn from './TaskColumn';
 import TaskCard from './TaskCard';
 import Button from './Button';
+import { jwtDecode } from 'jwt-decode';
 
 export interface Task {
   id: string;
@@ -27,6 +29,7 @@ export interface Task {
   assignee?: string;
   dueDate?: string;
   tags: string[];
+  isOver: boolean; // Added to track completion status
 }
 
 export interface Column {
@@ -43,49 +46,10 @@ interface FilterOptions {
 
 const TaskBoard: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([
-    {
-      id: 'todo',
-      title: 'To Do',
-      tasks: [
-        {
-          id: '1',
-          title: 'Implement AI Chat Feature',
-          description: 'Add natural language processing capabilities to the chat system',
-          priority: 'high',
-          assignee: 'John Doe',
-          dueDate: '2025-03-15',
-          tags: ['feature', 'ai', 'frontend'],
-        },
-        {
-          id: '2',
-          title: 'Optimize Model Training',
-          description: 'Improve the performance of machine learning model training pipeline',
-          priority: 'medium',
-          assignee: 'Jane Smith',
-          dueDate: '2025-03-20',
-          tags: ['optimization', 'ml', 'backend'],
-        },
-      ],
-    },
-    {
-      id: 'done',
-      title: 'Done',
-      tasks: [
-        {
-          id: '5',
-          title: 'API Documentation',
-          description: 'Update API documentation with new endpoints',
-          priority: 'low',
-          assignee: 'Charlie Brown',
-          dueDate: '2025-03-05',
-          tags: ['documentation', 'api'],
-        },
-      ],
-    },
+    { id: 'todo', title: 'To Do', tasks: [] },
+    { id: 'done', title: 'Done', tasks: [] },
   ]);
-
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({});
@@ -104,6 +68,54 @@ const TaskBoard: React.FC = () => {
     })
   );
 
+ const token = localStorage.getItem('token') || '';
+  const decoded: { id: number } = jwtDecode(token);
+  const userID = decoded.id;
+console.log(token,"ovo je token iz taskBoard")
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/chat/responses', {
+          headers: {
+            Authorization: token, 
+          },
+        })
+        console.log(response.data,"Get Response from /chat/responses")
+        const tasks = response.data.data.map((item: any) => ({
+            id: item._id,
+            title: item.response.userPromptResponse || 'Untitled Task',
+            description: item.response.additionalNotes || '',
+            priority: item.response.priority as 'low' | 'medium' | 'high',
+            assignee: item.response.peopleInvolved?.[0] || undefined,
+            dueDate: item.response.completionDate
+              ? new Date(item.response.completionDate).toISOString().split('T')[0]
+              : undefined,
+            tags: item.response.category ? [item.response.category] : [],
+            isOver: item.response.isOver,
+          }));
+          
+          // 👇 Dodaj ovu liniju da vidiš taskove u konzoli
+          console.log('Fetched tasks:', tasks);
+          
+       
+        setColumns([
+          {
+            id: 'todo',
+            title: 'To Do',
+            tasks: tasks.filter((task: Task) => !task.isOver),
+          },
+          {
+            id: 'done',
+            title: 'Done',
+            tasks: tasks.filter((task: Task) => task.isOver),
+          },
+        ]);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+    fetchTasks();
+  }, []);
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const task = columns
@@ -114,7 +126,7 @@ const TaskBoard: React.FC = () => {
     }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over) return;
@@ -122,7 +134,7 @@ const TaskBoard: React.FC = () => {
     const activeTask = columns
       .flatMap((col) => col.tasks)
       .find((task) => task.id === active.id);
-    
+
     if (!activeTask) return;
 
     const activeColumn = columns.find((col) =>
@@ -133,61 +145,42 @@ const TaskBoard: React.FC = () => {
     if (!activeColumn || !overColumn) return;
 
     if (activeColumn !== overColumn) {
-      setColumns((prev) =>
-        prev.map((col) => {
-          if (col.id === activeColumn.id) {
-            return {
-              ...col,
-              tasks: col.tasks.filter((task) => task.id !== active.id),
-            };
+      // Update task status in backend
+      try {
+        await axios.put(
+          `http://localhost:8080/api/chat/responses/${activeTask.id}`,
+          { isOver: overColumn.id === 'done' },
+          {
+            headers: {
+              Authorization: token,
+            },
           }
-          if (col.id === overColumn.id) {
-            return {
-              ...col,
-              tasks: [...col.tasks, activeTask],
-            };
-          }
-          return col;
-        })
-      );
+        );
+
+        // Update frontend state
+        setColumns((prev) =>
+          prev.map((col) => {
+            if (col.id === activeColumn.id) {
+              return {
+                ...col,
+                tasks: col.tasks.filter((task) => task.id !== active.id),
+              };
+            }
+            if (col.id === overColumn.id) {
+              return {
+                ...col,
+                tasks: [...col.tasks, { ...activeTask, isOver: overColumn.id === 'done' }],
+              };
+            }
+            return col;
+          })
+        );
+      } catch (error) {
+        console.error('Error updating task status:', error);
+      }
     }
 
     setActiveTask(null);
-    setActiveColumn(null);
-  };
-
-  const handleAddTask = () => {
-    if (!newTask.title) return;
-
-    const task: Task = {
-      id: Math.random().toString(36).substr(2, 9),
-      title: newTask.title,
-      description: newTask.description || '',
-      priority: newTask.priority as 'low' | 'medium' | 'high',
-      assignee: newTask.assignee,
-      dueDate: newTask.dueDate,
-      tags: newTask.tags || [],
-    };
-
-    setColumns((prev) =>
-      prev.map((col) => {
-        if (col.id === 'todo') {
-          return {
-            ...col,
-            tasks: [...col.tasks, task],
-          };
-        }
-        return col;
-      })
-    );
-
-    setNewTask({
-      title: '',
-      description: '',
-      priority: 'medium',
-      tags: [],
-    });
-    setShowAddTask(false);
   };
 
   const filteredColumns = columns.map((column) => ({
@@ -225,7 +218,6 @@ const TaskBoard: React.FC = () => {
 
   return (
     <section className="py-12 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen relative overflow-hidden">
-      {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-gradient-to-b from-blue-500/5 to-purple-500/5 rounded-full blur-3xl transform rotate-12"></div>
         <div className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-gradient-to-t from-indigo-500/5 to-blue-500/5 rounded-full blur-3xl transform -rotate-12"></div>
@@ -240,11 +232,9 @@ const TaskBoard: React.FC = () => {
         >
           <div className="flex flex-col items-center justify-center mb-8 text-center">
             <h1 className="m-[30px] text-3xl font-bold text-gray-900 dark:text-white mb-30">
-            Zadaci razvoja veštačke inteligencije
+              Zadaci razvoja veštačke inteligencije
             </h1>
-         
-            
-            {/* Centered search and filter controls */}
+
             <div className="w-full max-w-3xl flex flex-col gap-1">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 justify-center">
                 <div className="relative flex-grow max-w-md">
@@ -286,7 +276,6 @@ const TaskBoard: React.FC = () => {
             </div>
           </div>
 
-          {/* Filters Panel - Centered */}
           {showFilters && (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8 shadow-sm max-w-4xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -361,7 +350,6 @@ const TaskBoard: React.FC = () => {
             </div>
           )}
 
-          {/* Add Task Modal */}
           {showAddTask && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg">
@@ -462,11 +450,6 @@ const TaskBoard: React.FC = () => {
                     onClick={() => setShowAddTask(false)}
                   >
                     Cancel
-                  </Button>
-                  <Button
-                    onClick={handleAddTask}
-                  >
-                    Add Task
                   </Button>
                 </div>
               </div>
