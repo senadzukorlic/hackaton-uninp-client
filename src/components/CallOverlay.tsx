@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Phone, PhoneOff } from "lucide-react";
-
+import { useActive } from "../contexts/ActivateContext";
 interface CallOverlayProps {
   onAnswer: () => void;
   onDecline: () => void;
@@ -14,6 +14,7 @@ export default function CallOverlay({
 }: CallOverlayProps) {
   const [callDuration, setCallDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { setIsRunning, isRunning } = useActive();
 
   const callerImage = "";
   const callerName = "Sandra";
@@ -30,22 +31,43 @@ export default function CallOverlay({
   useEffect(() => {
     onShow();
 
-    audioRef.current = new Audio("/sounds/ringtone.mp3"); // You'll need to add this file to your public folder
+    audioRef.current = new Audio("/sounds/ringtone.mp3");
 
     if (audioRef.current) {
       audioRef.current.loop = true;
-      audioRef.current.play().catch((error) => {
-        console.error("Audio playback failed:", error);
-      });
-    }
 
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
+      // Play audio only after user interaction or use a button to trigger it
+      const playAudio = async () => {
+        try {
+          // Pre-load the audio
+          await audioRef.current?.load();
+          // Play with user gesture or after a slight delay
+          const playPromise = audioRef.current?.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((error) => {
+              console.error("Audio playback failed:", error);
+              // Handle the error or provide a button for manual play if needed
+            });
+          }
+        } catch (error) {
+          console.error("Audio setup failed:", error);
+        }
+      };
+
+      // Slight delay to ensure component is fully mounted
+      const timer = setTimeout(() => {
+        playAudio();
+      }, 300);
+
+      return () => {
+        clearTimeout(timer);
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current = null;
+        }
+      };
+    }
+  }, [onShow]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -60,6 +82,7 @@ export default function CallOverlay({
       audioRef.current.pause();
     }
     onAnswer();
+    setIsRunning(true);
   };
 
   const handleDecline = () => {

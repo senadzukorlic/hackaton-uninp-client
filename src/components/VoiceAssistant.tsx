@@ -5,7 +5,7 @@ import axios from "axios";
 import { useAiResponse } from "../contexts/AiResponseContext";
 import { useActive } from "../contexts/ActivateContext";
 const VoiceAssistant: React.FC = () => {
-  const {isRunning} = useActive()
+  const { isRunning } = useActive();
   const [connecting, setConnecting] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<{ text: string; isUser: string }[]>(
@@ -14,13 +14,13 @@ const VoiceAssistant: React.FC = () => {
   const { aiRes, setAiRes } = useAiResponse();
   const [defaultResponse, setDefaultResponse] = useState<string>(aiRes);
   useEffect(() => {
-    if(isRunning) {
-      startConversation()
+    if (isRunning) {
+      startConversation();
     } else {
-      stopConversation()
+      stopConversation();
     }
-  }, [isRunning])
-  
+  }, [isRunning]);
+
   // Handle conversation state
   const conversation = useConversation({
     onConnect: () => {
@@ -80,10 +80,12 @@ const VoiceAssistant: React.FC = () => {
         console.log("MSG", aiRes);
       }
       await conversation.startSession({
-        agentId: "55LdsD87rotf5BTzrrn7", // Replace with your agent ID
+        agentId: "L8vBqXv6O998VmOB2pzh", // Replace with your agent ID
         overrides: {
           agent: {
-            firstMessage: `${defaultResponse || "Zdravo, kako mogu da ti pomognem"}`,
+            firstMessage: `${
+              defaultResponse || "Zdravo, kako mogu da ti pomognem"
+            }`,
           },
         },
       });
@@ -98,7 +100,7 @@ const VoiceAssistant: React.FC = () => {
   // Handle stopping the conversation
   const stopConversation = useCallback(async () => {
     setMessage("Disconnecting...");
-    setAiRes("Zdravo, kako mogu da ti pomognem?")
+    setAiRes("Zdravo, kako mogu da ti pomognem?");
     await conversation.endSession();
   }, [conversation]);
 

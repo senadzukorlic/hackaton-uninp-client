@@ -45,7 +45,7 @@ const Hero: React.FC = () => {
             className="text-xl md:text-2xl font-light text-gray-700 dark:text-gray-300 mb-10 max-w-3xl mx-auto"
             variants={itemVariants}
           >
-            Personalizovani zivotni savetnik. koji ce vam pruziti potpuni
+            Personalizovani zivotni savetnik. koji ce vam pruziti potpunu
             podrsku u svakodnevnim obavezama.
           </motion.p>
 
