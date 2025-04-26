@@ -148,7 +148,7 @@ const TaskBoard: React.FC = () => {
       // Update task status in backend
       try {
         await axios.put(
-          `http://localhost:8070/api/chat/responses/${activeTask.id}`,
+          `http://localhost:8080/api/chat/responses/${activeTask.id}`,
           { isOver: overColumn.id === "done" },
           {
             headers: {
