@@ -28,7 +28,7 @@ const Header: React.FC = () => {
   const navigation = [
     { name: 'Početna', path: '/' },
     { name: 'Funkcionalnosti', path: '/features' },
-    { name: 'O nama', path: '/about' },
+    { name: 'Pricing', path: '/pricing' },
     { name: 'Kontakt', path: '/contact' },
     { name: 'Taskovi', path: '/TaskBoard' },
   ];

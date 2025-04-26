@@ -30,7 +30,7 @@ const Contact: React.FC = () => {
                     type="text"
                     id="name"
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                    placeholder="Petar Petrović"
+                    placeholder="Haris Gorcevic"
                   />
                 </div>
                 
@@ -42,7 +42,7 @@ const Contact: React.FC = () => {
                     type="email"
                     id="email"
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
-                    placeholder="petar@example.com"
+                    placeholder="harisgorcevic@gmail.com"
                   />
                 </div>
                 
@@ -104,7 +104,7 @@ const Contact: React.FC = () => {
                     <h4 className="text-lg font-medium text-gray-900 dark:text-white">Adresa</h4>
                     <p className="text-gray-600 dark:text-gray-300">
                       Bulevar inovacija 123<br />
-                      Beograd, Srbija
+                      Novi Pazar, Srbija
                     </p>
                   </div>
                 </div>
