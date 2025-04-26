@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   DndContext,
   DragOverlay,
@@ -10,22 +10,20 @@ import {
   useSensors,
   DragStartEvent,
   DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
-import { Plus, Filter, Search, X } from 'lucide-react';
-import axios from 'axios';
-import TaskColumn from './TaskColumn';
-import TaskCard from './TaskCard';
-import Button from './Button';
-import { jwtDecode } from 'jwt-decode';
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { Plus, Filter, Search, X } from "lucide-react";
+import axios from "axios";
+import TaskColumn from "./TaskColumn";
+import TaskCard from "./TaskCard";
+import Button from "./Button";
+import { jwtDecode } from "jwt-decode";
 
 export interface Task {
   id: string;
   title: string;
   description: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   assignee?: string;
   dueDate?: string;
   tags: string[];
@@ -39,25 +37,25 @@ export interface Column {
 }
 
 interface FilterOptions {
-  priority?: 'low' | 'medium' | 'high';
+  priority?: "low" | "medium" | "high";
   assignee?: string;
   tags?: string[];
 }
 
 const TaskBoard: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([
-    { id: 'todo', title: 'To Do', tasks: [] },
-    { id: 'done', title: 'Done', tasks: [] },
+    { id: "todo", title: "To Do", tasks: [] },
+    { id: "done", title: "Done", tasks: [] },
   ]);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({});
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTask, setNewTask] = useState<Partial<Task>>({
-    title: '',
-    description: '',
-    priority: 'medium',
+    title: "",
+    description: "",
+    priority: "medium",
     tags: [],
   });
 
@@ -68,50 +66,52 @@ const TaskBoard: React.FC = () => {
     })
   );
 
- const token = localStorage.getItem('token') || '';
+  const token = localStorage.getItem("token") || "";
   const decoded: { id: number } = jwtDecode(token);
   const userID = decoded.id;
-console.log(token,"ovo je token iz taskBoard")
+  console.log(token, "ovo je token iz taskBoard");
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('http://localhost:8070/api/chat/responses', {
-          headers: {
-            Authorization: token, 
-          },
-        })
-        console.log(response.data,"Get Response from /chat/responses")
+        const response = await axios.get(
+          "http://localhost:8080/api/chat/responses",
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        console.log(response.data, "Get Response from /chat/responses");
         const tasks = response.data.data.map((item: any) => ({
-            id: item._id,
-            title: item.response.userPromptResponse || 'Untitled Task',
-            description: item.response.additionalNotes || '',
-            priority: item.response.priority as 'low' | 'medium' | 'high',
-            assignee: item.response.peopleInvolved?.[0] || undefined,
-            dueDate: item.response.completionDate
-              ? new Date(item.response.completionDate).toISOString().split('T')[0]
-              : undefined,
-            tags: item.response.category ? [item.response.category] : [],
-            isOver: item.response.isOver,
-          }));
-          
-          // 👇 Dodaj ovu liniju da vidiš taskove u konzoli
-          console.log('Fetched tasks:', tasks);
-          
-       
+          id: item._id,
+          title: item.response.userPromptResponse || "Untitled Task",
+          description: item.response.additionalNotes || "",
+          priority: item.response.priority as "low" | "medium" | "high",
+          assignee: item.response.peopleInvolved?.[0] || undefined,
+          dueDate: item.response.completionDate
+            ? new Date(item.response.completionDate).toISOString().split("T")[0]
+            : undefined,
+          tags: item.response.category ? [item.response.category] : [],
+          isOver: item.response.isOver,
+        }));
+
+        // 👇 Dodaj ovu liniju da vidiš taskove u konzoli
+        console.log("Fetched tasks:", tasks);
+
         setColumns([
           {
-            id: 'todo',
-            title: 'To Do',
+            id: "todo",
+            title: "To Do",
             tasks: tasks.filter((task: Task) => !task.isOver),
           },
           {
-            id: 'done',
-            title: 'Done',
+            id: "done",
+            title: "Done",
             tasks: tasks.filter((task: Task) => task.isOver),
           },
         ]);
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error("Error fetching tasks:", error);
       }
     };
     fetchTasks();
@@ -149,7 +149,7 @@ console.log(token,"ovo je token iz taskBoard")
       try {
         await axios.put(
           `http://localhost:8070/api/chat/responses/${activeTask.id}`,
-          { isOver: overColumn.id === 'done' },
+          { isOver: overColumn.id === "done" },
           {
             headers: {
               Authorization: token,
@@ -169,14 +169,17 @@ console.log(token,"ovo je token iz taskBoard")
             if (col.id === overColumn.id) {
               return {
                 ...col,
-                tasks: [...col.tasks, { ...activeTask, isOver: overColumn.id === 'done' }],
+                tasks: [
+                  ...col.tasks,
+                  { ...activeTask, isOver: overColumn.id === "done" },
+                ],
               };
             }
             return col;
           })
         );
       } catch (error) {
-        console.error('Error updating task status:', error);
+        console.error("Error updating task status:", error);
       }
     }
 
@@ -186,13 +189,17 @@ console.log(token,"ovo je token iz taskBoard")
   const filteredColumns = columns.map((column) => ({
     ...column,
     tasks: column.tasks.filter((task) => {
-      const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      const matchesSearch =
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         task.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesPriority = !filters.priority || task.priority === filters.priority;
-      const matchesAssignee = !filters.assignee || task.assignee === filters.assignee;
-      const matchesTags = !filters.tags?.length || 
-        filters.tags.some(tag => task.tags.includes(tag));
+      const matchesPriority =
+        !filters.priority || task.priority === filters.priority;
+      const matchesAssignee =
+        !filters.assignee || task.assignee === filters.assignee;
+      const matchesTags =
+        !filters.tags?.length ||
+        filters.tags.some((tag) => task.tags.includes(tag));
 
       return matchesSearch && matchesPriority && matchesAssignee && matchesTags;
     }),
@@ -213,7 +220,11 @@ console.log(token,"ovo je token iz taskBoard")
   );
 
   const allAssignees = Array.from(
-    new Set(columns.flatMap((col) => col.tasks.map((task) => task.assignee)).filter(Boolean))
+    new Set(
+      columns
+        .flatMap((col) => col.tasks.map((task) => task.assignee))
+        .filter(Boolean)
+    )
   );
 
   return (
@@ -248,7 +259,7 @@ console.log(token,"ovo je token iz taskBoard")
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   {searchQuery && (
                     <button
-                      onClick={() => setSearchQuery('')}
+                      onClick={() => setSearchQuery("")}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
                       <X size={14} />
@@ -256,18 +267,15 @@ console.log(token,"ovo je token iz taskBoard")
                   )}
                 </div>
                 <div className="flex items-center justify-center gap-4">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => setShowFilters(!showFilters)}
                   >
                     <Filter size={16} className="mr-2" />
                     Filter
                   </Button>
-                  <Button 
-                    size="sm"
-                    onClick={() => setShowAddTask(true)}
-                  >
+                  <Button size="sm" onClick={() => setShowAddTask(true)}>
                     <Plus size={16} className="mr-2" />
                     Add Task
                   </Button>
@@ -284,8 +292,13 @@ console.log(token,"ovo je token iz taskBoard")
                     Priority
                   </label>
                   <select
-                    value={filters.priority || ''}
-                    onChange={(e) => setFilters({ ...filters, priority: e.target.value as any })}
+                    value={filters.priority || ""}
+                    onChange={(e) =>
+                      setFilters({
+                        ...filters,
+                        priority: e.target.value as any,
+                      })
+                    }
                     className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                   >
                     <option value="">All</option>
@@ -300,8 +313,10 @@ console.log(token,"ovo je token iz taskBoard")
                     Assignee
                   </label>
                   <select
-                    value={filters.assignee || ''}
-                    onChange={(e) => setFilters({ ...filters, assignee: e.target.value })}
+                    value={filters.assignee || ""}
+                    onChange={(e) =>
+                      setFilters({ ...filters, assignee: e.target.value })
+                    }
                     className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                   >
                     <option value="">All</option>
@@ -320,10 +335,15 @@ console.log(token,"ovo je token iz taskBoard")
                   <select
                     multiple
                     value={filters.tags || []}
-                    onChange={(e) => setFilters({
-                      ...filters,
-                      tags: Array.from(e.target.selectedOptions, option => option.value)
-                    })}
+                    onChange={(e) =>
+                      setFilters({
+                        ...filters,
+                        tags: Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        ),
+                      })
+                    }
                     className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                   >
                     {allTags.map((tag) => (
@@ -364,7 +384,9 @@ console.log(token,"ovo je token iz taskBoard")
                     <input
                       type="text"
                       value={newTask.title}
-                      onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                      onChange={(e) =>
+                        setNewTask({ ...newTask, title: e.target.value })
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -374,7 +396,9 @@ console.log(token,"ovo je token iz taskBoard")
                     </label>
                     <textarea
                       value={newTask.description}
-                      onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                      onChange={(e) =>
+                        setNewTask({ ...newTask, description: e.target.value })
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                       rows={3}
                     />
@@ -386,7 +410,12 @@ console.log(token,"ovo je token iz taskBoard")
                       </label>
                       <select
                         value={newTask.priority}
-                        onChange={(e) => setNewTask({ ...newTask, priority: e.target.value as any })}
+                        onChange={(e) =>
+                          setNewTask({
+                            ...newTask,
+                            priority: e.target.value as any,
+                          })
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                       >
                         <option value="low">Low</option>
@@ -399,8 +428,10 @@ console.log(token,"ovo je token iz taskBoard")
                         Assignee
                       </label>
                       <select
-                        value={newTask.assignee || ''}
-                        onChange={(e) => setNewTask({ ...newTask, assignee: e.target.value })}
+                        value={newTask.assignee || ""}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, assignee: e.target.value })
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                       >
                         <option value="">Select Assignee</option>
@@ -418,8 +449,10 @@ console.log(token,"ovo je token iz taskBoard")
                     </label>
                     <input
                       type="date"
-                      value={newTask.dueDate || ''}
-                      onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                      value={newTask.dueDate || ""}
+                      onChange={(e) =>
+                        setNewTask({ ...newTask, dueDate: e.target.value })
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -430,10 +463,15 @@ console.log(token,"ovo je token iz taskBoard")
                     <select
                       multiple
                       value={newTask.tags}
-                      onChange={(e) => setNewTask({
-                        ...newTask,
-                        tags: Array.from(e.target.selectedOptions, option => option.value)
-                      })}
+                      onChange={(e) =>
+                        setNewTask({
+                          ...newTask,
+                          tags: Array.from(
+                            e.target.selectedOptions,
+                            (option) => option.value
+                          ),
+                        })
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white"
                     >
                       {allTags.map((tag) => (
@@ -473,12 +511,7 @@ console.log(token,"ovo je token iz taskBoard")
             ))}
           </div>
           <DragOverlay>
-            {activeTask && (
-              <TaskCard
-                task={activeTask}
-                isDragging
-              />
-            )}
+            {activeTask && <TaskCard task={activeTask} isDragging />}
           </DragOverlay>
         </DndContext>
       </div>
