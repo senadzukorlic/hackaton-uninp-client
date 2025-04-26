@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   BrowserRouter,
   Routes,
@@ -32,28 +32,32 @@ import ParentControl from "./components/ParentControl";
 
 // ScrollToTop component to handle scroll position on route changes
 const ScrollToTop: React.FC = () => {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-};
-
-interface Calling {
-  calling: boolean;
-  setCall: React.Dispatch<React.SetStateAction<boolean>>;
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
 }
 
-// AnimatedRoutes component for page transitions
+interface Calling {
+  calling: boolean
+  setCall: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
-  const location = useLocation();
-  const token = localStorage.getItem("token");
-  const { setAiRes } = useAiResponse();
-  const navigate = useNavigate();
+  const location = useLocation()
+  const token = localStorage.getItem("token")
+  const { setAiRes } = useAiResponse()
+  const navigate = useNavigate()
+  const notification = useNotification()
+
+  useEffect(() => {
+    notification.error("Dobrodošli u aplikaciju", "Uspeh")
+  }, [])
+
   useEffect(() => {
     const ping = () => {
-      console.log("Ping");
+      console.log("Ping")
       axios
         .get("http://localhost:8080/api/chat/current-task", {
           headers: {
@@ -66,14 +70,17 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
             navigate("/calling");
             console.log(res.data.data.response.userPromptResponse);
           }
-        });
-    };
+        })
+        .catch((error) => {
+          console.log("API call failed:", error)
+        })
+    }
 
-    const interval = setInterval(ping, 10000);
-    ping(); // send one immediately on load
+    const interval = setInterval(ping, 10000)
+    ping()
 
-    return () => clearInterval(interval); // cleanup on unmount
-  }, []);
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <AnimatePresence mode="wait">
@@ -94,13 +101,7 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
         />
         <Route
           path="/assistant"
-          element={
-            token ? (
-              <VoiceAssistant />
-            ) : (
-              <Navigate to="/auth" />
-            )
-          }
+          element={token ? <VoiceAssistant /> : <Navigate to="/auth" />}
         />
         <Route
           path="/calling"
@@ -109,12 +110,12 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
               <CallOverlay
                 onShow={() => setCall(true)}
                 onAnswer={() => {
-                  setCall(false);
-                  navigate("/assistant");
+                  setCall(false)
+                  navigate("/assistant")
                 }}
                 onDecline={() => {
-                  setCall(false);
-                  navigate("/");
+                  setCall(false)
+                  navigate("/")
                 }}
               />
             ) : (
@@ -125,33 +126,34 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
-  );
-};
+  )
+}
 
 function App() {
-  const [call, setCall] = useState<boolean>(false);
+  const [call, setCall] = useState<boolean>(false)
 
   return (
     
     <ActivateContextProvider>
     <AiResponseProvider>
       <ThemeProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-
-          <div className="flex flex-col min-h-screen bg-light dark:bg-dark transition-colors duration-300">
-            {!call ? <Header /> : ""}
-            <main className="flex-grow">
-              <AnimatedRoutes calling={call} setCall={setCall} />
-            </main>
-            {!call ? <Footer /> : ""}
-            {!call ? <StickyFooter /> : ""}
-          </div>
-        </BrowserRouter>
+        <NotificationProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <div className="flex flex-col min-h-screen bg-light dark:bg-dark transition-colors duration-300">
+              {!call ? <Header /> : ""}
+              <main className="flex-grow">
+                <AnimatedRoutes calling={call} setCall={setCall} />
+              </main>
+              {!call ? <Footer /> : ""}
+              {!call ? <StickyFooter /> : ""}
+            </div>
+          </BrowserRouter>
+        </NotificationProvider>
       </ThemeProvider>
     </AiResponseProvider>
     </ActivateContextProvider>
   );
 }
 
-export default App;
+export default App

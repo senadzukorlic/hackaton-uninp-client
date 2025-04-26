@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react"
+import { motion } from "framer-motion"
 import {
   Check,
   Brain,
@@ -8,29 +8,29 @@ import {
   Shield,
   Star,
   ChevronRight,
-} from "lucide-react";
-import Button from "./Button";
-import AnimatedSection from "./AnimatedSection";
+} from "lucide-react"
+import Button from "./Button"
+import AnimatedSection from "./AnimatedSection"
 
 interface PricingFeature {
-  name: string;
-  included: boolean;
-  highlight?: boolean;
+  name: string
+  included: boolean
+  highlight?: boolean
 }
 
 interface PricingTier {
-  name: string;
-  description: string;
-  price: string;
-  billingPeriod: string;
-  features: PricingFeature[];
-  icon: React.ReactNode;
-  highlight?: boolean;
-  buttonVariant?: "primary" | "outline";
+  name: string
+  description: string
+  price: string
+  billingPeriod: string
+  features: PricingFeature[]
+  icon: React.ReactNode
+  highlight?: boolean
+  buttonVariant?: "primary" | "outline"
 }
 
 const Pricing: React.FC = () => {
-  const [isAnnual, setIsAnnual] = useState(true);
+  const [isAnnual, setIsAnnual] = useState(true)
 
   const pricingTiers: PricingTier[] = [
     {
@@ -93,7 +93,7 @@ const Pricing: React.FC = () => {
         { name: "Prilagođene integracije", included: true },
       ],
     },
-  ];
+  ]
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -103,7 +103,7 @@ const Pricing: React.FC = () => {
         staggerChildren: 0.2,
       },
     },
-  };
+  }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -115,7 +115,7 @@ const Pricing: React.FC = () => {
         ease: [0.16, 1, 0.3, 1],
       },
     },
-  };
+  }
 
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
@@ -282,17 +282,12 @@ const Pricing: React.FC = () => {
 
                   <div className="mt-8">
                     <Button
-                      variant={tier.buttonVariant}
+                      variant="primary"
                       className={`w-full flex justify-center ${
                         tier.highlight
-                          ? "!bg-black !text-blue-600 hover:!bg-blue-50 important-override"
+                          ? "!bg-black !text-white-600 hover:!bg-blue-50"
                           : ""
                       }`}
-                      style={
-                        tier.highlight
-                          ? { backgroundColor: "black", color: "#2563EB" }
-                          : {}
-                      }
                     >
                       Započnite
                       <ChevronRight size={23} className="ml-2" />
@@ -327,7 +322,7 @@ const Pricing: React.FC = () => {
         </AnimatedSection>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Pricing;
+export default Pricing
