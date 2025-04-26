@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import Button from './Button';
+import React from "react";
+import { motion } from "framer-motion";
+import Button from "./Button";
 
 const Hero: React.FC = () => {
   const containerVariants = {
@@ -8,9 +8,9 @@ const Hero: React.FC = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
-      }
-    }
+        staggerChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
@@ -20,9 +20,9 @@ const Hero: React.FC = () => {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: [0.16, 1, 0.3, 1]
-      }
-    }
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
   };
 
   return (
@@ -34,25 +34,35 @@ const Hero: React.FC = () => {
           initial="hidden"
           animate="visible"
         >
-          <motion.h1 
+          <motion.h1
             className="text-hero-mobile md:text-hero-desktop font-bold leading-tight text-gray-900 dark:text-white mb-6"
             variants={itemVariants}
           >
-            Sandra | <span className="text-primary-600">Tvoj Asistent</span> 
+            Sandra | <span className="text-primary-600">Tvoj Asistent</span>
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             className="text-xl md:text-2xl font-light text-gray-700 dark:text-gray-300 mb-10 max-w-3xl mx-auto"
             variants={itemVariants}
           >
-           Personalizovani zivotni savetnik. koji ce vam pruziti potpuni podrsku u svakodnevnim obavezama.
+            Personalizovani zivotni savetnik. koji ce vam pruziti potpuni
+            podrsku u svakodnevnim obavezama.
           </motion.p>
-          
+
           <motion.div
             className="flex flex-col sm:flex-row justify-center gap-4"
             variants={itemVariants}
           >
-            <Button size="lg">
+            <Button
+              size="lg"
+              onClick={() => {
+                window.scrollBy({
+                  top: window.innerHeight * 1.7, // 200vh - 2 times the viewport height
+                  left: 0,
+                  behavior: "smooth",
+                });
+              }}
+            >
               Zapocni
             </Button>
             <Button variant="outline" size="lg">
@@ -61,7 +71,7 @@ const Hero: React.FC = () => {
           </motion.div>
         </motion.div>
       </div>
-      
+
       {/* Decorative background elements */}
       <div className="absolute top-1/4 left-10 w-64 h-64 bg-primary-600/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-10 w-80 h-80 bg-primary-600/5 rounded-full blur-3xl"></div>
