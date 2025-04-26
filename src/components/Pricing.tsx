@@ -228,14 +228,14 @@ const Pricing: React.FC = () => {
                   <div className="mt-8">
                     <Button
                       variant={tier.buttonVariant}
-                      className={`w-full justify-center ${
+                      className={` w-full justify-center ${
                         tier.highlight
                           ? '!bg-white !text-blue-600 hover:!bg-blue-50'
                           : ''
                       }`}
                     >
                       Započnite
-                      <ChevronRight size={16} className="ml-2" />
+                      <ChevronRight size={16} className="bg ml-2" />
                     </Button>
                   </div>
                 </div>

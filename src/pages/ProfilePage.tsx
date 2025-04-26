@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Activity, TrendingUp, Clock, Brain, Zap, Cpu } from 'lucide-react';
+import { User, Activity, TrendingUp, Clock, Brain, Zap, Cpu, Flame, Award } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
@@ -17,7 +17,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels'; // Import datalabels plugin
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Button from '../components/Button';
 import { UserType } from '../types/UserType';
 
@@ -32,7 +32,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ChartDataLabels // Register datalabels
+  ChartDataLabels
 );
 
 const ProfilePage: React.FC = () => {
@@ -43,14 +43,46 @@ const ProfilePage: React.FC = () => {
   const token = localStorage.getItem('token') || '';
   const decoded: { id: number } = jwtDecode(token);
   const userID = decoded.id;
-  console.log(token,"token iz profila")
 
   // Mock recent activities
   const recentActivities = [
-    { id: 1, action: 'Završen zadatak: Projekat Alfa', timestamp: '2025-04-23 10:30' },
-    { id: 2, action: 'Ažurirane informacije profila', timestamp: '2025-04-22 15:15' },
-    { id: 3, action: 'Započet novi cilj: K2 ciljevi', timestamp: '2025-04-21 09:00' },
+    { id: 1, action: 'Completed AI-driven gym routine', timestamp: '2025-04-25 08:00' },
+    { id: 2, action: 'Finished productivity task: Project Plan', timestamp: '2025-04-24 14:30' },
+    { id: 3, action: 'Started learning module: AI Basics', timestamp: '2025-04-23 10:00' },
   ];
+
+  // Mock achievements data
+  const achievements = [
+    {
+      id: 1,
+      title: 'Gym Warrior',
+      description: 'Completed 30 consecutive days of AI-driven gym routines',
+      icon: <Zap size={24} className="text-yellow-500" />,
+      image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438', // Dumbbell image
+      date: '2025-04-20',
+    },
+    {
+      id: 2,
+      title: 'Task Master',
+      description: 'Completed 50 AI-assigned productivity tasks',
+      icon: <Award size={24} className="text-blue-500" />,
+      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40', // Desk/workspace image
+      date: '2025-04-15',
+    },
+    {
+      id: 3,
+      title: 'Learning Pro',
+      description: 'Finished 10 AI-guided learning modules',
+      icon: <Brain size={24} className="text-green-500" />,
+      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3', // Books/study image
+      date: '2025-04-10',
+    },
+  ];
+
+  // Mock streak data
+  const streak = {
+    count: 35, // 35 consecutive days
+  };
 
   const getUserInfo = async () => {
     await axios
@@ -62,7 +94,7 @@ const ProfilePage: React.FC = () => {
       .then((res) => {
         setUserInfo(res.data);
       })
-      .catch((err) => console.error('Greška pri preuzimanju informacija o korisniku:', err));
+      .catch((err) => console.error('Error fetching user info:', err));
   };
 
   useEffect(() => {
@@ -91,13 +123,13 @@ const ProfilePage: React.FC = () => {
     },
   };
 
-  // Chart data
+  // Updated chart data reflecting AI-driven routine
   const activityData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun'],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
       {
-        label: 'Korisnička aktivnost',
-        data: [65, 59, 80, 81, 56, 55],
+        label: 'Routine Adherence (%)',
+        data: [70, 75, 80, 85, 90, 95], // Mock data showing increasing adherence
         fill: false,
         borderColor: '#10b981',
         tension: 0.4,
@@ -106,11 +138,11 @@ const ProfilePage: React.FC = () => {
   };
 
   const progressData = {
-    labels: ['Nedelja 1', 'Nedelja 2', 'Nedelja 3', 'Nedelja 4'],
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
     datasets: [
       {
-        label: 'Završetak zadataka',
-        data: [30, 45, 60, 75],
+        label: 'Task Completion Rate (%)',
+        data: [60, 70, 85, 90], // Mock data showing task completion
         backgroundColor: '#3b82f6',
         borderColor: '#3b82f6',
         borderWidth: 1,
@@ -119,10 +151,10 @@ const ProfilePage: React.FC = () => {
   };
 
   const performanceData = {
-    labels: ['Projekti', 'Zadaci', 'Ciljevi'],
+    labels: ['Gym Routines', 'Productivity Tasks', 'Learning Modules'],
     datasets: [
       {
-        data: [40, 35, 25],
+        data: [35, 40, 25], // Mock data for AI-driven categories
         backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'],
         borderColor: ['#fff'],
         borderWidth: 2,
@@ -130,19 +162,18 @@ const ProfilePage: React.FC = () => {
     ],
   };
 
-  // Horizontal Bar chart data for AI models
   const aiModelsData = {
     labels: [
-      'Obrada jezika',
-      'Prepoznavanje slika',
-      'Prediktivna analitika',
-      'Generisanje prirodnog jezika',
-      'Prepoznavanje govora',
+      'Routine Optimization',
+      'Task Prioritization',
+      'Fitness Tracking',
+      'Learning Path',
+      'Motivation Analysis',
     ],
     datasets: [
       {
-        label: 'Tačnost (%)',
-        data: [95, 78, 85, 92, 88],
+        label: 'Performance (%)',
+        data: [92, 88, 95, 90, 85], // Mock data for AI model performance
         backgroundColor: [
           'rgba(59, 130, 246, 0.6)',
           'rgba(139, 92, 246, 0.6)',
@@ -158,8 +189,7 @@ const ProfilePage: React.FC = () => {
           'rgba(236, 72, 153, 1)',
         ],
         borderWidth: 2,
-        // Additional data for reliability to show in tooltips
-        reliability: [88, 92, 75, 95, 82],
+        reliability: [90, 85, 93, 88, 80], // Mock reliability data
       },
     ],
   };
@@ -181,10 +211,10 @@ const ProfilePage: React.FC = () => {
             const index = context.dataIndex;
             const dataset = context.dataset;
             const model = context.chart.data.labels[index];
-            const accuracy = dataset.data[index];
+            const performance = dataset.data[index];
             const reliability = dataset.reliability ? dataset.reliability[index] : null;
             return reliability
-              ? `${model}: Tačnost ${accuracy}%, Pouzdanost ${reliability}%`
+              ? `${model}: Performance ${performance}%, Reliability ${reliability}%`
               : `${context.dataset.label}: ${context.raw}`;
           },
         },
@@ -202,7 +232,7 @@ const ProfilePage: React.FC = () => {
         max: 100,
         title: {
           display: true,
-          text: 'Tačnost (%)',
+          text: 'Performance (%)',
           color: '#1f2937',
         },
         ticks: { color: '#1f2937' },
@@ -211,7 +241,7 @@ const ProfilePage: React.FC = () => {
       y: {
         title: {
           display: true,
-          text: 'Model',
+          text: 'AI Model',
           color: '#1f2937',
         },
         ticks: { color: '#1f2937' },
@@ -258,7 +288,7 @@ const ProfilePage: React.FC = () => {
     },
   };
 
-  // Doughnut-specific options to adjust datalabels
+  // Doughnut-specific options
   const doughnutOptions = {
     ...chartOptions,
     plugins: {
@@ -287,32 +317,33 @@ const ProfilePage: React.FC = () => {
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-dark py-20">
-      <div className="container my-12 mx-auto px-4">
+      <div className="container my-12 mx-auto px-4 max-w-7xl">
         {/* Header */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mb-12"
+          className="mb-12 text-center"
         >
           <motion.h1
             className="text-4xl md:text-5xl font-bold leading-tight text-gray-900 dark:text-white mb-6"
             variants={itemVariants}
           >
-            Korisnički <span className="text-primary-600">profil</span>
+            Your <span className="text-primary-600">AI-Driven Profile</span>
           </motion.h1>
           <motion.p
-            className="text-lg md:text-xl font-light text-gray-700 dark:text-gray-300 max-w-3xl"
+            className="text-lg md:text-xl font-light text-gray-700 dark:text-gray-300 max-w-3xl mx-auto"
             variants={itemVariants}
           >
-            Pratite svoju aktivnost, napredak i performanse uz detaljnu analitiku.
+            Track your AI-guided routines, achievements, and performance metrics.
           </motion.p>
         </motion.div>
 
-        {/* User info and recent activities */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        {/* User Info, Achievements, and Recent Activities */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {/* User Info */}
           <AnimatedSection
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 lg:col-span-2"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
             delay={0.1}
           >
             <div className="flex items-center mb-6">
@@ -325,7 +356,7 @@ const ProfilePage: React.FC = () => {
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-6">{userInfo.email}</p>
             <div className="flex gap-4">
-              <Button size="md">Izmeni profil</Button>
+              <Button size="md">Edit Profile</Button>
               <Button
                 onClick={() => {
                   localStorage.removeItem('token');
@@ -334,42 +365,75 @@ const ProfilePage: React.FC = () => {
                 variant="outline"
                 size="md"
               >
-                Odjavi se
+                Log Out
               </Button>
             </div>
           </AnimatedSection>
 
+          {/* Achievements and Streak */}
           <AnimatedSection
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 md:col-span-1 lg:col-span-2"
             delay={0.2}
           >
+            {/* Streak Counter */}
+            <div className="mb-6 flex items-center justify-center bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-lg p-4">
+              <Flame size={28} className="mr-2 animate-pulse" />
+              <div>
+                <h3 className="text-xl font-bold">{streak.count} Day Streak</h3>
+                <p className="text-sm">Streak {streak.lastActive}</p>
+              </div>
+            </div>
+
+            {/* Achievements */}
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <Clock size={24} className="mr-2 text-primary-600" />
-              Nedavne aktivnosti
+              <Award size={24} className="mr-2 text-primary-600" />
+              Achievements
             </h3>
-            <ul className="space-y-4">
-              {recentActivities.map((activity) => (
-                <li key={activity.id} className="text-gray-600 dark:text-gray-300">
-                  <p className="text-sm font-medium">{activity.action}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{activity.timestamp}</p>
-                </li>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {achievements.map((achievement) => (
+                <div
+                  key={achievement.id}
+                  className="flex items-center bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
+                >
+                  <img
+                    src={achievement.image}
+                    alt={achievement.title}
+                    className="w-16 h-16 object-cover rounded-md mr-4"
+                  />
+                  <div>
+                    <div className="flex items-center mb-1">
+                      {achievement.icon}
+                      <h4 className="ml-2 text-lg font-semibold text-gray-900 dark:text-white">
+                        {achievement.title}
+                      </h4>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {achievement.description}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Earned: {achievement.date}
+                    </p>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
             <Button className="mt-4 text-primary-600 dark:text-primary-400">
-              Pogledaj sve aktivnosti
+              View All Achievements
             </Button>
           </AnimatedSection>
+
+       
         </div>
 
-        {/* Charts section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.2}
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <Activity size={24} className="mr-2 text-primary-600" />
-              Aktivnost tokom vremena
+              Routine Adherence
             </h3>
             <div className="h-64">
               <Line
@@ -385,7 +449,7 @@ const ProfilePage: React.FC = () => {
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <TrendingUp size={24} className="mr-2 text-primary-600" />
-              Napredak zadataka
+              Task Completion
             </h3>
             <div className="h-64">
               <Bar
@@ -401,7 +465,7 @@ const ProfilePage: React.FC = () => {
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <TrendingUp size={24} className="mr-2 text-primary-600" />
-              Metrike performansi
+              Routine Categories
             </h3>
             <div className="h-64">
               <Doughnut
@@ -416,38 +480,38 @@ const ProfilePage: React.FC = () => {
           </AnimatedSection>
         </div>
 
-        {/* AI Models Performance Section (Horizontal Bar) */}
+        {/* AI Models Performance Section (Largest Chart) */}
         <AnimatedSection
-          className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
+          className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
           delay={0.5}
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white flex items-center">
-                <Brain size={28} className="mr-3 text-blue-600" />
-                Matrica performansi AI modela
+              <h3 className="text-3xl font-semibold text-gray-900 dark:text-white flex items-center">
+                <Brain size={32} className="mr-3 text-blue-600" />
+                AI Routine Performance
               </h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-300">
-                Vizualizacija performansi AI modela u različitim domenima
+              <p className="mt-2 text-gray-600 dark:text-gray-300 max-w-2xl">
+                Analyze the effectiveness of AI models powering your daily routines and tasks.
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center">
                 <Cpu className="w-5 h-5 text-blue-600 mr-2" />
-                <span className="text-sm text-gray-600 dark:text-gray-300">Aktivni modeli: 5</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Active Models: 5</span>
               </div>
               <Button variant="outline" size="sm">
-                Pogledaj detalje
+                View Model Details
               </Button>
             </div>
           </div>
 
-          <div className="h-[500px] w-full">
+          <div className="h-[600px] w-full">
             <Bar
               data={aiModelsData}
               options={{
                 ...document.documentElement.classList.contains('dark') ? darkModeChartOptions : chartOptions,
-                indexAxis: 'y', // Make it horizontal
+                indexAxis: 'y', // Horizontal bar
                 plugins: {
                   ...chartOptions.plugins,
                   datalabels: {
@@ -456,7 +520,7 @@ const ProfilePage: React.FC = () => {
                     align: 'right',
                     formatter: (value: number, context: any) => {
                       const reliability = context.dataset.reliability[context.dataIndex];
-                      return `${value}% (Pouzdanost: ${reliability}%)`;
+                      return `${value}% (Rel: ${reliability}%)`;
                     },
                   },
                 },
@@ -466,19 +530,19 @@ const ProfilePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-              <div className="text-blue-600 dark:text-blue-400 font-semibold">Najveća tačnost</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">Generisanje prirodnog jezika</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">95% stopa tačnosti</div>
+              <div className="text-blue-600 dark:text-blue-400 font-semibold">Top Performer</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Fitness Tracking</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">95% Performance</div>
             </div>
             <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-              <div className="text-purple-600 dark:text-purple-400 font-semibold">Najpouzdaniji</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">Prepoznavanje slika</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">92% ocena pouzdanosti</div>
+              <div className="text-purple-600 dark:text-purple-400 font-semibold">Most Reliable</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Routine Optimization</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">90% Reliability</div>
             </div>
             <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-              <div className="text-green-600 dark:text-green-400 font-semibold">Najveći skup podataka</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">Prediktivna analitika</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">25M uzoraka za obuku</div>
+              <div className="text-green-600 dark:text-green-400 font-semibold">Largest Dataset</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Task Prioritization</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">30M Data Points</div>
             </div>
           </div>
         </AnimatedSection>

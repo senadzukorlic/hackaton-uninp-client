@@ -25,13 +25,13 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(false);
   }, [location]);
   
-  const navigation = [
-    { name: 'Početna', path: '/' },
-    { name: 'Funkcionalnosti', path: '/features' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'Kontakt', path: '/contact' },
-    { name: 'Taskovi', path: '/TaskBoard' },
-  ];
+  // const navigation = [
+  //   { name: 'Početna', path: '/' },
+  //   // { name: 'Funkcionalnosti', path: '/features' },
+  //   { name: 'Pricing', path: '/pricing' },
+  //   { name: 'Kontakt', path: '/contact' },
+  //   { name: 'Taskovi', path: '/TaskBoard' },
+  // ];
   
   return (
     <motion.header
@@ -52,7 +52,7 @@ const Header: React.FC = () => {
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              {navigation.map((item) => (
+              {/* {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
@@ -60,7 +60,7 @@ const Header: React.FC = () => {
                 >
                   {item.name}
                 </Link>
-              ))}
+              ))} */}
               <div className="ml-4">
                 <Button variant="outline" size="sm" onClick={() => {
                   localStorage.getItem("token") ? navigate('/profile') : navigate("/auth")
