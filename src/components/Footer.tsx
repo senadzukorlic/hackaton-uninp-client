@@ -8,11 +8,10 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="text-2xl font-bold text-primary-600 dark:text-primary-400 mb-4 inline-block">
-              HackatonUNINP
+              Sandra
             </Link>
             <p className="max-w-md">
-              A modern, responsive React single-page application with theme system, animations, 
-              and authentication components. Built with performance and accessibility in mind.
+              Tvoj personalizovani ai asistent, koji it pomaze u svakodnevnim taskovima.
             </p>
           </div>
           

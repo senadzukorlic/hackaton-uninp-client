@@ -3,8 +3,9 @@ import { useConversation } from "@11labs/react";
 import { Mic, MicOff } from "lucide-react";
 import axios from "axios";
 import { useAiResponse } from "../contexts/AiResponseContext";
-
+import { useActive } from "../contexts/ActivateContext";
 const VoiceAssistant: React.FC = () => {
+  const {isRunning} = useActive()
   const [connecting, setConnecting] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<{ text: string; isUser: string }[]>(
@@ -12,7 +13,14 @@ const VoiceAssistant: React.FC = () => {
   );
   const { aiRes, setAiRes } = useAiResponse();
   const [defaultResponse, setDefaultResponse] = useState<string>(aiRes);
-
+  useEffect(() => {
+    if(isRunning) {
+      startConversation()
+    } else {
+      stopConversation()
+    }
+  }, [isRunning])
+  
   // Handle conversation state
   const conversation = useConversation({
     onConnect: () => {
@@ -133,26 +141,26 @@ const VoiceAssistant: React.FC = () => {
       {/* Main orb container */}
 
       {/* Controls */}
-      <div className="flex space-x-6">
+      {/* <div className="flex space-x-6">
         {conversation.status !== "connected" ? (
-          <button
-            onClick={startConversation}
-            disabled={connecting}
-            className="px-6 py-3 bg-purple-600 text-white rounded-full flex items-center space-x-2 hover:bg-purple-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
-          >
-            <Mic className="w-5 h-5" />
-            <span>Start Listening</span>
-          </button>
-        ) : (
-          <button
-            onClick={stopConversation}
-            className="px-6 py-3 bg-purple-600 text-white rounded-full flex items-center space-x-2 hover:bg-purple-700 transition-colors"
-          >
-            <MicOff className="w-5 h-5" />
-            <span>Stop Listening</span>
-          </button>
+        //   <button
+        //     onClick={startConversation}
+        //     disabled={connecting}
+        //     className="px-6 py-3 bg-purple-600 text-white rounded-full flex items-center space-x-2 hover:bg-purple-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
+        //   >
+        //     <Mic className="w-5 h-5" />
+        //     <span>Start Listening</span>
+        //   </button>
+        // ) : (
+        //   <button
+        //     onClick={stopConversation}
+        //     className="px-6 py-3 bg-purple-600 text-white rounded-full flex items-center space-x-2 hover:bg-purple-700 transition-colors"
+        //   >
+        //     <MicOff className="w-5 h-5" />
+        //     <span>Stop Listening</span>
+        //   </button>
         )}
-      </div>
+      </div> */}
 
       {/* Status indicator */}
       <div className="mt-4 text-white text-sm opacity-70">

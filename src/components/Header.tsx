@@ -98,7 +98,7 @@ const Header: React.FC = () => {
           transition={{ duration: 0.2 }}
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {navigation.map((item) => (
+            {/* {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
@@ -106,7 +106,7 @@ const Header: React.FC = () => {
               >
                 {item.name}
               </Link>
-            ))}
+            ))} */}
             <Link
               to="/auth"
               className="block px-3 py-2 rounded-md text-base font-medium text-primary-600 dark:text-primary-400"

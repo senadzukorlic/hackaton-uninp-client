@@ -22,11 +22,13 @@ import Pricing from "./components/Pricing";
 import Features from "./components/Features";
 import axios from "axios";
 import CallOverlay from "./components/CallOverlay";
+import { ActivateContextProvider } from "./contexts/ActivateContext";
 import {
   AiResponseProvider,
   useAiResponse,
 } from "./contexts/AiResponseContext";
 import TaskBoard from "./components/TaskBoard";
+import ParentControl from "./components/ParentControl";
 
 // ScrollToTop component to handle scroll position on route changes
 const ScrollToTop: React.FC = () => {
@@ -59,7 +61,7 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
           },
         })
         .then((res) => {
-          if (res.data.success) {
+          if (res.data.success && res.data.data) {
             setAiRes(res.data.data.response.userPromptResponse);
             navigate("/calling");
             console.log(res.data.data.response.userPromptResponse);
@@ -81,6 +83,7 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/TaskBoard" element={<TaskBoard />} />
+        <Route path="/parentcontrol" element={<ParentControl/>} />
         <Route
           path="/auth"
           element={!token ? <AuthPage /> : <Navigate to="/" />}
@@ -129,6 +132,8 @@ function App() {
   const [call, setCall] = useState<boolean>(false);
 
   return (
+    
+    <ActivateContextProvider>
     <AiResponseProvider>
       <ThemeProvider>
         <BrowserRouter>
@@ -145,6 +150,7 @@ function App() {
         </BrowserRouter>
       </ThemeProvider>
     </AiResponseProvider>
+    </ActivateContextProvider>
   );
 }
 
