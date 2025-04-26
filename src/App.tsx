@@ -18,7 +18,7 @@ import ProfilePage from "./pages/ProfilePage";
 import StickyFooter from "./components/StickyFooter";
 import VoiceAssistant from "./components/VoiceAssistant";
 import Contact from "./components/Contact";
-import About from "./components/About";
+import Pricing from "./components/Pricing";
 import Features from "./components/Features";
 import axios from "axios";
 import CallOverlay from "./components/CallOverlay";
@@ -78,7 +78,7 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
         <Route path="/" element={<HomePage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/features" element={<Features />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route
           path="/auth"
           element={!token ? <AuthPage /> : <Navigate to="/" />}
