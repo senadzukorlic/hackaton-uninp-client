@@ -9,7 +9,8 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -18,17 +19,18 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  // 
-  // Close mobile menu when route changes
+
+  // Zatvori mobilni meni kada se promeni ruta
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
   
   const navigation = [
-    { name: 'Home', path: '/' },
-    { name: 'Features', path: '/features' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Početna', path: '/' },
+    { name: 'Funkcionalnosti', path: '/features' },
+    { name: 'O nama', path: '/about' },
+    { name: 'Kontakt', path: '/contact' },
+    { name: 'Taskovi', path: '/TaskBoard' },
   ];
   
   return (
@@ -60,10 +62,10 @@ const Header: React.FC = () => {
                 </Link>
               ))}
               <div className="ml-4">
-                <Button  variant="outline" size="sm" onClick={() => {
-                  localStorage.getItem("token") ? navigate('/profile'):navigate("/auth")
+                <Button variant="outline" size="sm" onClick={() => {
+                  localStorage.getItem("token") ? navigate('/profile') : navigate("/auth")
                 }}>
-                  {localStorage.getItem("token")? "My profile" : "Sign in "}
+                  {localStorage.getItem("token") ? "Moj profil" : "Prijavi se"}
                 </Button>
               </div>
               <div className="ml-2">
@@ -78,7 +80,7 @@ const Header: React.FC = () => {
               className="ml-2 p-2 rounded-md text-gray-900 dark:text-gray-100"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}
-              aria-label="Toggle mobile menu"
+              aria-label="Uključi/isključi mobilni meni"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -86,7 +88,7 @@ const Header: React.FC = () => {
         </div>
       </div>
       
-      {/* Mobile menu */}
+      {/* Mobilni meni */}
       {isMobileMenuOpen && (
         <motion.div
           className="md:hidden bg-white dark:bg-dark shadow-lg"
@@ -109,7 +111,7 @@ const Header: React.FC = () => {
               to="/auth"
               className="block px-3 py-2 rounded-md text-base font-medium text-primary-600 dark:text-primary-400"
             >
-              Sign In
+              Prijavi se
             </Link>
           </div>
         </motion.div>

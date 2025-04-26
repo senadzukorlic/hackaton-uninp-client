@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Activity, TrendingUp, Clock, Brain, Cpu } from 'lucide-react';
+import { User, Activity, TrendingUp, Clock, Brain, Zap, Cpu } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Line, Bar, Doughnut, Scatter } from 'react-chartjs-2';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   BarElement,
   ArcElement,
-  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -19,13 +20,14 @@ import {
 import Button from '../components/Button';
 import { UserType } from '../types/UserType';
 
-// Register Chart.js components
+// Registracija Chart.js komponenti
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   BarElement,
   ArcElement,
-  LineElement,
   Title,
   Tooltip,
   Legend
@@ -40,11 +42,11 @@ const ProfilePage: React.FC = () => {
   const decoded: { id: number } = jwtDecode(token);
   const userID = decoded.id;
 
-  // Mock recent activity data
+  // Mock podaci o nedavnim aktivnostima (zameniti stvarnim API pozivom ako je potrebno)
   const recentActivities = [
-    { id: 1, action: 'Completed Task: Project Alpha', timestamp: '2025-04-23 10:30 AM' },
-    { id: 2, action: 'Updated Profile Information', timestamp: '2025-04-22 3:15 PM' },
-    { id: 3, action: 'Started New Goal: Q2 Objectives', timestamp: '2025-04-21 9:00 AM' },
+    { id: 1, action: 'Završen zadatak: Projekat Alfa', timestamp: '2025-04-23 10:30' },
+    { id: 2, action: 'Ažurirane informacije profila', timestamp: '2025-04-22 15:15' },
+    { id: 3, action: 'Započet novi cilj: K2 ciljevi', timestamp: '2025-04-21 09:00' },
   ];
 
   const getUserInfo = async () => {
@@ -57,7 +59,7 @@ const ProfilePage: React.FC = () => {
       .then((res) => {
         setUserInfo(res.data);
       })
-      .catch((err) => console.error('Error fetching user info:', err));
+      .catch((err) => console.error('Greška pri preuzimanju informacija o korisniku:', err));
   };
 
   useEffect(() => {
@@ -86,12 +88,12 @@ const ProfilePage: React.FC = () => {
     },
   };
 
-  // Chart data
+  // Podaci i opcije za grafikone
   const activityData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun'],
     datasets: [
       {
-        label: 'User Activity',
+        label: 'Korisnička aktivnost',
         data: [65, 59, 80, 81, 56, 55],
         fill: false,
         borderColor: '#10b981',
@@ -101,10 +103,10 @@ const ProfilePage: React.FC = () => {
   };
 
   const progressData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    labels: ['Nedelja 1', 'Nedelja 2', 'Nedelja 3', 'Nedelja 4'],
     datasets: [
       {
-        label: 'Task Completion',
+        label: 'Završetak zadataka',
         data: [30, 45, 60, 75],
         backgroundColor: '#3b82f6',
         borderColor: '#3b82f6',
@@ -114,7 +116,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const performanceData = {
-    labels: ['Projects', 'Tasks', 'Goals'],
+    labels: ['Projekti', 'Zadaci', 'Ciljevi'],
     datasets: [
       {
         data: [40, 35, 25],
@@ -125,35 +127,38 @@ const ProfilePage: React.FC = () => {
     ],
   };
 
-  // AI Models Performance Data for Horizontal Bar Chart
+  // Podaci o performansama AI modela
   const aiModelsData = {
-    labels: [
-      'Language Processing',
-      'Image Recognition',
-      'Predictive Analytics',
-      'Natural Language Generation',
-      'Speech Recognition',
-    ],
     datasets: [
       {
-        label: 'Accuracy (%)',
-        data: [95, 78, 85, 92, 88],
-        backgroundColor: 'rgba(59, 130, 246, 0.6)',
-        borderColor: 'rgba(59, 130, 246, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Reliability (%)',
-        data: [88, 92, 75, 95, 82],
-        backgroundColor: 'rgba(16, 185, 129, 0.6)',
-        borderColor: 'rgba(16, 185, 129, 1)',
-        borderWidth: 1,
+        label: 'Performanse AI modela',
+        data: [
+          { x: 95, y: 88, r: 15, model: 'Obrada jezika' },
+          { x: 78, y: 92, r: 20, model: 'Prepoznavanje slika' },
+          { x: 85, y: 75, r: 25, model: 'Prediktivna analitika' },
+          { x: 92, y: 95, r: 18, model: 'Generisanje prirodnog jezika' },
+          { x: 88, y: 82, r: 22, model: 'Prepoznavanje govora' },
+        ],
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.6)',
+          'rgba(139, 92, 246, 0.6)',
+          'rgba(16, 185, 129, 0.6)',
+          'rgba(245, 158, 11, 0.6)',
+          'rgba(236, 72, 153, 0.6)',
+        ],
+        borderColor: [
+          'rgba(59, 130, 246, 1)',
+          'rgba(139, 92, 246, 1)',
+          'rgba(16, 185, 129, 1)',
+          'rgba(245, 158, 11, 1)',
+          'rgba(236, 72, 153, 1)',
+        ],
+        borderWidth: 2,
       },
     ],
   };
 
   const chartOptions = {
-    indexAxis: 'y' as const, // Makes the bar chart horizontal
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -162,47 +167,34 @@ const ProfilePage: React.FC = () => {
           color: '#1f2937',
           usePointStyle: true,
         },
-        position: 'top' as const,
       },
       tooltip: {
         callbacks: {
           label: (context: any) => {
-            const datasetLabel = context.dataset.label || '';
-            const value = context.parsed.x;
-            return `${datasetLabel}: ${value}%`;
+            const model = context.raw.model;
+            return `${model}: Tačnost ${context.raw.x}%, Pouzdanost ${context.raw.y}%`;
           },
         },
-      },
-      datalabels: {
-        // Add data labels to bars
-        anchor: 'end' as const,
-        align: 'end' as const,
-        color: '#1f2937',
-        font: {
-          weight: 'bold' as const,
-        },
-        formatter: (value: number) => `${value}%`,
       },
     },
     scales: {
       x: {
-        min: 0,
+        min: 50,
         max: 100,
         title: {
           display: true,
-          text: 'Percentage (%)',
+          text: 'Tačnost (%)',
           color: '#1f2937',
         },
-        ticks: {
-          color: '#1f2937',
-          callback: (value: number) => `${value}%`,
-        },
+        ticks: { color: '#1f2937' },
         grid: { color: '#e5e7eb' },
       },
       y: {
+        min: 50,
+        max: 100,
         title: {
           display: true,
-          text: 'AI Models',
+          text: 'Pouzdanost (%)',
           color: '#1f2937',
         },
         ticks: { color: '#1f2937' },
@@ -221,10 +213,6 @@ const ProfilePage: React.FC = () => {
           usePointStyle: true,
         },
       },
-      datalabels: {
-        ...chartOptions.plugins.datalabels,
-        color: '#f3f4f6',
-      },
     },
     scales: {
       x: {
@@ -233,10 +221,7 @@ const ProfilePage: React.FC = () => {
           ...chartOptions.scales.x.title,
           color: '#f3f4f6',
         },
-        ticks: {
-          ...chartOptions.scales.x.ticks,
-          color: '#f3f4f6',
-        },
+        ticks: { color: '#f3f4f6' },
         grid: { color: '#374151' },
       },
       y: {
@@ -254,7 +239,7 @@ const ProfilePage: React.FC = () => {
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-dark py-20">
       <div className="container my-12 mx-auto px-4">
-        {/* Header */}
+        {/* Zaglavlje */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -265,19 +250,19 @@ const ProfilePage: React.FC = () => {
             className="text-4xl md:text-5xl font-bold leading-tight text-gray-900 dark:text-white mb-6"
             variants={itemVariants}
           >
-            User <span className="text-primary-600">Profile</span>
+            Korisnički <span className="text-primary-600">profil</span>
           </motion.h1>
           <motion.p
             className="text-lg md:text-xl font-light text-gray-700 dark:text-gray-300 max-w-3xl"
             variants={itemVariants}
           >
-            Track your activity, progress, and performance with insightful analytics.
+            Pratite svoju aktivnost, napredak i performanse uz detaljnu analitiku.
           </motion.p>
         </motion.div>
 
-        {/* User Info and Recent Activity */}
+        {/* Informacije o korisniku i nedavne aktivnosti */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* User Info Card (Max Width) */}
+          {/* Kartica sa informacijama o korisniku (maksimalna širina) */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 lg:col-span-2"
             delay={0.1}
@@ -292,7 +277,7 @@ const ProfilePage: React.FC = () => {
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-6">{userInfo.email}</p>
             <div className="flex gap-4">
-              <Button size="md">Edit Profile</Button>
+              <Button size="md">Izmeni profil</Button>
               <Button
                 onClick={() => {
                   localStorage.removeItem('token');
@@ -301,19 +286,19 @@ const ProfilePage: React.FC = () => {
                 variant="outline"
                 size="md"
               >
-                Logout
+                Odjavi se
               </Button>
             </div>
           </AnimatedSection>
 
-          {/* Recent Activity Card */}
+          {/* Kartica sa nedavnim aktivnostima */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
             delay={0.2}
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <Clock size={24} className="mr-2 text-primary-600" />
-              Recent Activity
+              Nedavne aktivnosti
             </h3>
             <ul className="space-y-4">
               {recentActivities.map((activity) => (
@@ -324,21 +309,21 @@ const ProfilePage: React.FC = () => {
               ))}
             </ul>
             <Button className="mt-4 text-primary-600 dark:text-primary-400">
-              View All Activity
+              Pogledaj sve aktivnosti
             </Button>
           </AnimatedSection>
         </div>
 
-        {/* Charts Section */}
+        {/* Sekcija sa grafikonima */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Activity Line Chart */}
+          {/* Grafikon linije aktivnosti */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.2}
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <Activity size={24} className="mr-2 text-primary-600" />
-              Activity Over Time
+              Aktivnost tokom vremena
             </h3>
             <div className="h-64">
               <Line
@@ -348,14 +333,14 @@ const ProfilePage: React.FC = () => {
             </div>
           </AnimatedSection>
 
-          {/* Progress Bar Chart */}
+          {/* Grafikon stubića napretka */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.3}
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <TrendingUp size={24} className="mr-2 text-primary-600" />
-              Task Progress
+              Napredak zadataka
             </h3>
             <div className="h-64">
               <Bar
@@ -365,14 +350,14 @@ const ProfilePage: React.FC = () => {
             </div>
           </AnimatedSection>
 
-          {/* Performance Doughnut Chart */}
+          {/* Grafikon krofne performansi */}
           <AnimatedSection
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
             delay={0.4}
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <TrendingUp size={24} className="mr-2 text-primary-600" />
-              Performance Metrics
+              Metrike performansi
             </h3>
             <div className="h-64">
               <Doughnut
@@ -386,7 +371,7 @@ const ProfilePage: React.FC = () => {
           </AnimatedSection>
         </div>
 
-        {/* AI Models Performance Section */}
+        {/* Nova sekcija performansi AI modela */}
         <AnimatedSection
           className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
           delay={0.5}
@@ -395,25 +380,25 @@ const ProfilePage: React.FC = () => {
             <div>
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white flex items-center">
                 <Brain size={28} className="mr-3 text-blue-600" />
-                AI Models Performance Matrix
+                Matrica performansi AI modela
               </h3>
               <p className="mt-2 text-gray-600 dark:text-gray-300">
-                Visualization of AI model performance across different domains
+                Vizualizacija performansi AI modela u različitim domenima
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center">
                 <Cpu className="w-5 h-5 text-blue-600 mr-2" />
-                <span className="text-sm text-gray-600 dark:text-gray-300">Active Models: 5</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Aktivni modeli: 5</span>
               </div>
               <Button variant="outline" size="sm">
-                View Details
+                Pogledaj detalje
               </Button>
             </div>
           </div>
 
           <div className="h-[500px] w-full">
-            <Bar
+            <Scatter
               data={aiModelsData}
               options={document.documentElement.classList.contains('dark') ? darkModeChartOptions : chartOptions}
             />
@@ -421,25 +406,25 @@ const ProfilePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-              <div className="text-blue-600 dark:text-blue-400 font-semibold">Highest Accuracy</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">Natural Language Generation</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">95% accuracy rate</div>
+              <div className="text-blue-600 dark:text-blue-400 font-semibold">Najveća tačnost</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Generisanje prirodnog jezika</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">95% stopa tačnosti</div>
             </div>
             <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-              <div className="text-purple-600 dark:text-purple-400 font-semibold">Most Reliable</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">Image Recognition</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">92% reliability score</div>
+              <div className="text-purple-600 dark:text-purple-400 font-semibold">Najpouzdaniji</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Prepoznavanje slika</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">92% ocena pouzdanosti</div>
             </div>
             <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-              <div className="text-green-600 dark:text-green-400 font-semibold">Largest Dataset</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">Predictive Analytics</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">25M training samples</div>
+              <div className="text-green-600 dark:text-green-400 font-semibold">Najveći skup podataka</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">Prediktivna analitika</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">25M uzoraka za obuku</div>
             </div>
           </div>
         </AnimatedSection>
       </div>
 
-      {/* Decorative background elements */}
+      {/* Dekorativni elementi pozadine */}
       <div className="absolute top-1/4 left-10 w-64 h-64 bg-primary-600/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-10 w-80 h-80 bg-primary-600/5 rounded-full blur-3xl"></div>
     </section>
