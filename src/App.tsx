@@ -64,9 +64,26 @@ const AnimatedRoutes: React.FC<Calling> = ({ calling, setCall }) => {
         })
         .then((res) => {
           if (res.data.success) {
-            setAiRes(res.data.data.response.userPromptResponse)
-            navigate("/calling")
-            console.log(res.data.data.response.userPromptResponse)
+            const responseData = res.data.data.response
+
+            // Uzmi prioritet iz odgovora sa bekenda
+            const priority = responseData.priority
+            const message = responseData.userPromptResponse
+            const category = responseData.category || "Zadatak"
+
+            // Proveri prioritet i prikaži odgovarajuću notifikaciju
+            if (priority === "low" || priority === "medium") {
+              // Za nizak ili srednji prioritet prikaži error notifikaciju
+              notification.error(message, `${category} (${priority})`)
+            } else if (priority === "high") {
+              // Za visok prioritet prikaži alarm notifikaciju
+              notification.alarm(message, `${category} (${priority})`, "high")
+              // Nastavi sa navigacijom na calling page samo za high priority
+              setAiRes(message)
+              navigate("/calling")
+            }
+
+            console.log(message, priority)
           }
         })
         .catch((error) => {
