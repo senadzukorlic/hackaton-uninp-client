@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
-import About from '../components/About';
+import About from '../components/Pricing';
 import Contact from '../components/Contact';
 
 const HomePage: React.FC = () => {
